@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "529437550119",
+    "firebase_url": "https://newfirebase-e0b9c.firebaseio.com",
+    "project_id": "newfirebase-e0b9c",
+    "storage_bucket": "newfirebase-e0b9c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:529437550119:android:1d0b42781525cf6b981002",
+        "android_client_info": {
+          "package_name": "com.howlab.newfirebase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "529437550119-8agbbsf4l16847c6s4a01gccms2jsp8n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.howlab.newfirebase",
+            "certificate_hash": "52fc5008ea59fda8fb0e75e53e9bfe46a9e4da58"
+          }
+        },
+        {
+          "client_id": "529437550119-bc33mgjfoaii89nsols4l65jv8079f7s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCqqN4ilzO05o3K7IpmbzjEyPAQxWT9ZUA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "529437550119-bc33mgjfoaii89nsols4l65jv8079f7s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
