@@ -25,4 +25,9 @@
         android:text="GoogleLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/facebook_login_button"
+        android:text="FacebookLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 </LinearLayout>
