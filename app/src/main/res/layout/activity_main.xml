@@ -21,6 +21,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
     <Button
+        android:id="@+id/email_login_button"
+        android:text="Email Login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <Button
         android:id="@+id/google_login_button"
         android:text="GoogleLogin"
         android:layout_width="wrap_content"

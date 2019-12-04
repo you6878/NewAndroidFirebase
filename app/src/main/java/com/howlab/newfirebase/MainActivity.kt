@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
+import com.facebook.login.LoginBehavior
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -51,8 +52,23 @@ class MainActivity : AppCompatActivity() {
         facebook_login_button.setOnClickListener {
             facebookLogin()
         }
+        email_login_button.setOnClickListener {
+            loginEmail()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        moveNextPage()
+    }
+    fun moveNextPage(){
+        var currentUser = FirebaseAuth.getInstance().currentUser
+        if(currentUser != null){
+            startActivity(Intent(this,NextActivity::class.java))
+        }
     }
     fun facebookLogin(){
+        LoginManager.getInstance().loginBehavior = LoginBehavior.WEB_VIEW_ONLY
         LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile","email"))
         LoginManager.getInstance().registerCallback(callbackManager,object : FacebookCallback<LoginResult>{
             override fun onSuccess(result: LoginResult?) {
@@ -73,7 +89,7 @@ class MainActivity : AppCompatActivity() {
         var credential = FacebookAuthProvider.getCredential(result?.accessToken?.token!!)
         FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener { task ->
             if(task.isSuccessful){
-                println("Facebook Login Success")
+                moveNextPage()
             }
         }
     }
@@ -99,7 +115,17 @@ class MainActivity : AppCompatActivity() {
 
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email,password).addOnCompleteListener { task ->
             if(task.isSuccessful){
-                println("Signup success")
+                moveNextPage()
+            }
+        }
+    }
+    fun loginEmail(){
+        var email = email_edittext.text.toString()
+        var password = password_edittext.text.toString()
+
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(email,password).addOnCompleteListener { task ->
+            if(task.isSuccessful){
+                moveNextPage()
             }
         }
     }
@@ -108,7 +134,7 @@ class MainActivity : AppCompatActivity() {
         FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener {
             task ->
             if(task.isSuccessful){
-                println("Google Login Success")
+                moveNextPage()
             }
         }
     }
