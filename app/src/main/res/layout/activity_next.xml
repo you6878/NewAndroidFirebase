@@ -4,7 +4,43 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".NextActivity">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/set_edittext"
+            android:hint="Age"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:text="Set"
+            android:id="@+id/set_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/update_edittext"
+            android:hint="Gender"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:text="Update"
+            android:id="@+id/update_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+    <Button
+        android:id="@+id/delete_button"
+        android:text="Delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
     <Button
         android:text="Logout"
         android:id="@+id/logout_button"

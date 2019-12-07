@@ -7,6 +7,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_next.*
 
 class NextActivity : AppCompatActivity() {
@@ -23,6 +24,15 @@ class NextActivity : AppCompatActivity() {
             .requestEmail()
             .build()
         googleSignInClient = GoogleSignIn.getClient(this,gso)
+        set_button.setOnClickListener {
+            saveData()
+        }
+        update_button.setOnClickListener {
+            updateData()
+        }
+        delete_button.setOnClickListener {
+            deleteData()
+        }
     }
     fun logout(){
         FirebaseAuth.getInstance().signOut()
@@ -34,5 +44,36 @@ class NextActivity : AppCompatActivity() {
         LoginManager.getInstance().logOut()
 
         finish()
+    }
+    fun saveData(){
+        var setEditTextString = set_edittext.text.toString()
+
+        var map = mutableMapOf<String,Any>()
+        map["name"] = "howl"
+        map["age"] = setEditTextString
+
+        FirebaseDatabase.getInstance().reference
+            .child("users")
+            .child("1")
+            .setValue(map)
+    }
+    fun updateData(){
+        var updateEditTextString = update_edittext.text.toString()
+
+        var map = mutableMapOf<String,Any>()
+        map["gender"] = updateEditTextString
+
+        FirebaseDatabase.getInstance().reference
+            .child("users")
+            .child("1")
+            .updateChildren(map)
+
+    }
+
+    fun deleteData(){
+        FirebaseDatabase.getInstance().reference
+            .child("users")
+            .child("1")
+            .removeValue()
     }
 }
