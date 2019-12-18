@@ -7,10 +7,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_next.*
 
 class NextActivity : AppCompatActivity() {
@@ -47,6 +44,9 @@ class NextActivity : AppCompatActivity() {
         }
         query_observe_button.setOnClickListener {
             queryObserveData()
+        }
+        runTransaction_imageview.setOnClickListener {
+            runTransaction()
         }
     }
     fun logout(){
@@ -151,6 +151,46 @@ class NextActivity : AppCompatActivity() {
                 override fun onDataChange(p0: DataSnapshot) {
                     var map = p0.children.first().value as Map<String,Any>
                     query_observe_textview.text = map["name"].toString()
+                }
+
+            })
+    }
+    fun runTransaction(){
+        var uid = FirebaseAuth.getInstance().uid
+
+        FirebaseDatabase.getInstance().reference
+            .child("users")
+            .child("1")
+            .runTransaction(object : Transaction.Handler{
+                override fun onComplete(p0: DatabaseError?, p1: Boolean, p2: DataSnapshot?) {
+                    var p = p2?.getValue(UserModel::class.java)
+                    runTransaction_textview.text = p?.likeCount.toString()
+                    if(p!!.likes.containsKey(uid)){
+                        runTransaction_imageview.setImageResource(android.R.drawable.star_on)
+                    }else{
+                        runTransaction_imageview.setImageResource(android.R.drawable.star_off)
+                    }
+                }
+
+                override fun doTransaction(p0: MutableData): Transaction.Result {
+                    var p = p0.getValue(UserModel::class.java)
+                    if(p == null){
+                        p = UserModel()
+                        p.likeCount = 1
+                        p.likes[uid!!] = true
+                        p0.value = p
+                        return Transaction.success(p0)
+                    }
+                    if(p.likes.containsKey(uid)){
+                        p.likeCount = p.likeCount!! - 1
+                        p.likes.remove(uid)
+                    }else{
+                        p.likeCount = p.likeCount!! + 1
+                        p.likes[uid!!] = true
+                    }
+                    p0.value = p
+
+                    return Transaction.success(p0)
                 }
 
             })
