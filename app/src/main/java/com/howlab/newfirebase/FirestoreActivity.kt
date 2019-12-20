@@ -1,30 +1,17 @@
 package com.howlab.newfirebase
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.facebook.login.LoginManager
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_next.*
 
-class NextActivity : AppCompatActivity() {
-    var googleSignInClient : GoogleSignInClient? = null
+class FirestoreActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_next)
-        logout_button.setOnClickListener {
-            logout()
-        }
-
-        var gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
-        googleSignInClient = GoogleSignIn.getClient(this,gso)
+        setContentView(R.layout.activity_firestore)
         set_button.setOnClickListener {
             saveData()
         }
@@ -49,20 +36,6 @@ class NextActivity : AppCompatActivity() {
         runTransaction_imageview.setOnClickListener {
             runTransaction()
         }
-        firestore_button.setOnClickListener {
-            startActivity(Intent(this,FirestoreActivity::class.java))
-        }
-    }
-    fun logout(){
-        FirebaseAuth.getInstance().signOut()
-
-        //Google Session out
-        googleSignInClient?.signOut()
-
-        //Facebook Session out
-        LoginManager.getInstance().logOut()
-
-        finish()
     }
     fun saveData(){
         var setEditTextString = set_edittext.text.toString()
@@ -71,10 +44,10 @@ class NextActivity : AppCompatActivity() {
         map["name"] = "howl"
         map["age"] = setEditTextString
 
-        FirebaseDatabase.getInstance().reference
-            .child("users")
-            .child("1")
-            .setValue(map)
+        FirebaseFirestore.getInstance()
+            .collection("users")
+            .document("1")
+            .set(map)
     }
     fun updateData(){
         var updateEditTextString = update_edittext.text.toString()
@@ -82,56 +55,43 @@ class NextActivity : AppCompatActivity() {
         var map = mutableMapOf<String,Any>()
         map["gender"] = updateEditTextString
 
-        FirebaseDatabase.getInstance().reference
-            .child("users")
-            .child("1")
-            .updateChildren(map)
+        FirebaseFirestore.getInstance()
+            .collection("users")
+            .document("1")
+            .update(map)
 
     }
 
     fun deleteData(){
-        FirebaseDatabase.getInstance().reference
-            .child("users")
-            .child("1")
-            .removeValue()
+        FirebaseFirestore.getInstance()
+            .collection("users")
+            .document("1")
+            .delete()
     }
     fun readSingleData(){
-        FirebaseDatabase.getInstance().reference
-            .child("users")
-            .child("1")
-            .addListenerForSingleValueEvent(object : ValueEventListener{
-                override fun onCancelled(p0: DatabaseError) {
-
-                }
-
-                override fun onDataChange(p0: DataSnapshot) {
-                    var map = p0.value as Map<String,Any>
-                    read_single_textview.text = map["age"].toString()
-                }
-
-            })
+        FirebaseFirestore.getInstance()
+            .collection("users")
+            .document("1")
+            .get().addOnSuccessListener { documentSnapshot ->
+                var map = documentSnapshot.data as Map<String, Any>
+                read_single_textview.text = map["age"].toString()
+            }
     }
     fun readObserveData(){
-        FirebaseDatabase.getInstance().reference
-            .child("users")
-            .child("1")
-            .addValueEventListener(object : ValueEventListener{
-                override fun onCancelled(p0: DatabaseError) {
+        FirebaseFirestore.getInstance()
+            .collection("users")
+            .document("1")
+            .addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
+                var map = documentSnapshot?.data as Map<String,Any>
+                read_observe_textview.text = map["age"].toString()
+            }
 
-                }
-
-                override fun onDataChange(p0: DataSnapshot) {
-                    var map = p0.value as Map<String,Any>
-                    read_observe_textview.text = map["age"].toString()
-                }
-
-            })
     }
     fun querySingleData(){
         FirebaseDatabase.getInstance().reference
             .child("users")
             .orderByChild("age").equalTo(query_single_edittext.text.toString())
-            .addListenerForSingleValueEvent(object : ValueEventListener{
+            .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {
 
                 }
@@ -147,7 +107,7 @@ class NextActivity : AppCompatActivity() {
         FirebaseDatabase.getInstance().reference
             .child("users")
             .orderByChild("age").equalTo(query_observe_edittext.text.toString())
-            .addValueEventListener(object : ValueEventListener{
+            .addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {
 
                 }
