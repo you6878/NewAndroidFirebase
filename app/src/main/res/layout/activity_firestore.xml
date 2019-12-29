@@ -70,18 +70,35 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/query_single_textview"
-            android:hint="Text"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"/>
         <EditText
-            android:id="@+id/query_single_edittext"
+            android:id="@+id/simple_query_single_edittext"
             android:layout_width="100dp"
             android:layout_height="wrap_content"/>
         <Button
             android:text="query single"
-            android:id="@+id/query_single_button"
+            android:id="@+id/simple_query_single_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <Button
+            android:text="Compound Query 1"
+            android:textSize="11dp"
+            android:id="@+id/compound_query_1_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:text="Compound Query 2"
+            android:textSize="11dp"
+            android:id="@+id/compound_query_2_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:text="Compound Query 3"
+            android:textSize="11dp"
+            android:id="@+id/compound_query_3_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
     </LinearLayout>

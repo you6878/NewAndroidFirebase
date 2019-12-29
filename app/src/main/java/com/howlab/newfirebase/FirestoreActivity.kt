@@ -5,7 +5,22 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.android.synthetic.main.activity_firestore.*
+import kotlinx.android.synthetic.main.activity_firestore.query_observe_textview
 import kotlinx.android.synthetic.main.activity_next.*
+import kotlinx.android.synthetic.main.activity_next.delete_button
+import kotlinx.android.synthetic.main.activity_next.query_observe_button
+import kotlinx.android.synthetic.main.activity_next.query_observe_edittext
+import kotlinx.android.synthetic.main.activity_next.read_observe_button
+import kotlinx.android.synthetic.main.activity_next.read_observe_textview
+import kotlinx.android.synthetic.main.activity_next.read_single_button
+import kotlinx.android.synthetic.main.activity_next.read_single_textview
+import kotlinx.android.synthetic.main.activity_next.runTransaction_imageview
+import kotlinx.android.synthetic.main.activity_next.runTransaction_textview
+import kotlinx.android.synthetic.main.activity_next.set_button
+import kotlinx.android.synthetic.main.activity_next.set_edittext
+import kotlinx.android.synthetic.main.activity_next.update_button
+import kotlinx.android.synthetic.main.activity_next.update_edittext
 
 class FirestoreActivity : AppCompatActivity() {
 
@@ -27,8 +42,17 @@ class FirestoreActivity : AppCompatActivity() {
         read_observe_button.setOnClickListener {
             readObserveData()
         }
-        query_single_button.setOnClickListener {
-            querySingleData()
+        simple_query_single_button.setOnClickListener {
+            simpleQuerySingleData()
+        }
+        compound_query_1_button.setOnClickListener {
+            compoundQuery_1()
+        }
+        compound_query_2_button.setOnClickListener {
+            compoundQuery_2()
+        }
+        compound_query_3_button.setOnClickListener {
+            compoundQuery_3()
         }
         query_observe_button.setOnClickListener {
             queryObserveData()
@@ -42,11 +66,12 @@ class FirestoreActivity : AppCompatActivity() {
 
         var map = mutableMapOf<String,Any>()
         map["name"] = "howl"
+        map["gender"] = "Male"
         map["age"] = setEditTextString
 
         FirebaseFirestore.getInstance()
             .collection("users")
-            .document("1")
+            .document()
             .set(map)
     }
     fun updateData(){
@@ -87,37 +112,51 @@ class FirestoreActivity : AppCompatActivity() {
             }
 
     }
-    fun querySingleData(){
-        FirebaseDatabase.getInstance().reference
-            .child("users")
-            .orderByChild("age").equalTo(query_single_edittext.text.toString())
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onCancelled(p0: DatabaseError) {
+    fun simpleQuerySingleData(){
+        FirebaseFirestore.getInstance()
+            .collection("users")
+            .whereEqualTo("age",simple_query_single_edittext.text.toString())
+            .get().addOnSuccessListener { querySnapshot ->
+                println(querySnapshot.documents)
+            }
 
-                }
-
-                override fun onDataChange(p0: DataSnapshot) {
-                    var map = p0.children.first().value as Map<String,Any>
-                    query_single_textview.text = map["name"].toString()
-                }
-
-            })
+    }
+    fun compoundQuery_1(){
+        FirebaseFirestore.getInstance()
+            .collection("users")
+            .whereEqualTo("age","16")
+            .whereEqualTo("gender","Male")
+            .get().addOnSuccessListener { querySnapshot ->
+                println(querySnapshot.documents)
+            }
+    }
+    fun compoundQuery_2(){
+        FirebaseFirestore.getInstance()
+            .collection("users")
+            .whereLessThan("age","16")
+            .whereEqualTo("gender","Male")
+            .get().addOnSuccessListener { querySnapshot ->
+                println(querySnapshot.documents)
+            }
+    }
+    fun compoundQuery_3(){
+        FirebaseFirestore.getInstance()
+            .collection("users")
+            .whereGreaterThan("age","15")
+            .whereLessThan("age","17")
+            .get().addOnSuccessListener { querySnapshot ->
+                println(querySnapshot.documents)
+            }
     }
     fun queryObserveData(){
-        FirebaseDatabase.getInstance().reference
-            .child("users")
-            .orderByChild("age").equalTo(query_observe_edittext.text.toString())
-            .addValueEventListener(object : ValueEventListener {
-                override fun onCancelled(p0: DatabaseError) {
+        FirebaseFirestore.getInstance()
+            .collection("users")
+            .whereEqualTo("age",query_observe_edittext.text.toString())
+            .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
+                var map = querySnapshot?.documents?.first()?.data as Map<String,Any>
+                query_observe_textview.text = map["name"].toString()
+            }
 
-                }
-
-                override fun onDataChange(p0: DataSnapshot) {
-                    var map = p0.children.first().value as Map<String,Any>
-                    query_observe_textview.text = map["name"].toString()
-                }
-
-            })
     }
     fun runTransaction(){
         var uid = FirebaseAuth.getInstance().uid
