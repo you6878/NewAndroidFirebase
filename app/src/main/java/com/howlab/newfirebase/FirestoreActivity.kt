@@ -3,7 +3,6 @@ package com.howlab.newfirebase
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.*
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_firestore.*
 import kotlinx.android.synthetic.main.activity_firestore.query_observe_textview
@@ -161,41 +160,34 @@ class FirestoreActivity : AppCompatActivity() {
     fun runTransaction(){
         var uid = FirebaseAuth.getInstance().uid
 
-        FirebaseDatabase.getInstance().reference
-            .child("users")
-            .child("1")
-            .runTransaction(object : Transaction.Handler{
-                override fun onComplete(p0: DatabaseError?, p1: Boolean, p2: DataSnapshot?) {
-                    var p = p2?.getValue(UserModel::class.java)
-                    runTransaction_textview.text = p?.likeCount.toString()
-                    if(p!!.likes.containsKey(uid)){
-                        runTransaction_imageview.setImageResource(android.R.drawable.star_on)
-                    }else{
-                        runTransaction_imageview.setImageResource(android.R.drawable.star_off)
-                    }
-                }
+        var docRef = FirebaseFirestore.getInstance().collection("users").document("1")
 
-                override fun doTransaction(p0: MutableData): Transaction.Result {
-                    var p = p0.getValue(UserModel::class.java)
-                    if(p == null){
-                        p = UserModel()
-                        p.likeCount = 1
-                        p.likes[uid!!] = true
-                        p0.value = p
-                        return Transaction.success(p0)
-                    }
-                    if(p.likes.containsKey(uid)){
-                        p.likeCount = p.likeCount!! - 1
-                        p.likes.remove(uid)
-                    }else{
-                        p.likeCount = p.likeCount!! + 1
-                        p.likes[uid!!] = true
-                    }
-                    p0.value = p
+        FirebaseFirestore.getInstance().runTransaction { transaction ->
+            var p = transaction.get(docRef).toObject(UserModel::class.java)
 
-                    return Transaction.success(p0)
-                }
-
-            })
+            if(p == null){
+                p = UserModel()
+                p.likeCount = 1
+                p.likes[uid!!] = true
+                transaction.set(docRef,p)
+                return@runTransaction p
+            }
+            if(p.likes.containsKey(uid)){
+                p.likeCount = p.likeCount!! - 1
+                p.likes.remove(uid)
+            }else{
+                p.likeCount = p.likeCount!! + 1
+                p.likes[uid!!] = true
+            }
+            transaction.set(docRef,p)
+            return@runTransaction p
+        }.addOnSuccessListener { p ->
+            runTransaction_textview.text = p?.likeCount.toString()
+            if(p!!.likes.containsKey(uid)){
+                runTransaction_imageview.setImageResource(android.R.drawable.star_on)
+            }else{
+                runTransaction_imageview.setImageResource(android.R.drawable.star_off)
+            }
+        }
     }
 }
