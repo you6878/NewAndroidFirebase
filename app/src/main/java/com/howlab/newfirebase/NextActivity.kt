@@ -52,6 +52,9 @@ class NextActivity : AppCompatActivity() {
         firestore_button.setOnClickListener {
             startActivity(Intent(this,FirestoreActivity::class.java))
         }
+        storage_button.setOnClickListener {
+            startActivity(Intent(this,StorageActivity::class.java))
+        }
     }
     fun logout(){
         FirebaseAuth.getInstance().signOut()
