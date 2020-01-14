@@ -33,4 +33,30 @@
             android:layout_height="wrap_content"
             android:text="delete Photo" />
     </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <EditText
+            android:id="@+id/load_filename_edittext"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/load_photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="load Photo" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <EditText
+            android:id="@+id/download_filename_edittext"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/download_photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="download Photo" />
+    </LinearLayout>
 </LinearLayout>
