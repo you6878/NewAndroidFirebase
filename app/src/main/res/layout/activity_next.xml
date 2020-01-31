@@ -133,6 +133,12 @@
         android:text="Storage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/crush_button"
+        android:text="Crush"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
     <Button
         android:text="Logout"
         android:id="@+id/logout_button"

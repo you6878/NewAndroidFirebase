@@ -55,6 +55,10 @@ class NextActivity : AppCompatActivity() {
         storage_button.setOnClickListener {
             startActivity(Intent(this,StorageActivity::class.java))
         }
+        crush_button.setOnClickListener {
+            var a : String? = null
+            a!!.length
+        }
     }
     fun logout(){
         FirebaseAuth.getInstance().signOut()
