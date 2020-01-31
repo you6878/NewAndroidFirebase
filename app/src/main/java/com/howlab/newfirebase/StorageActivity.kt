@@ -7,6 +7,7 @@ import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.provider.MediaStore
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
@@ -21,9 +22,11 @@ import java.util.*
 
 class StorageActivity : AppCompatActivity() {
     val GALLERY = 0
+    val FILE = 1
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_storage)
+        upload_file.setOnClickListener { openContent() }
         upload_photo.setOnClickListener { openAlbum() }
         delete_photo.setOnClickListener { deletePhoto() }
         load_photo.setOnClickListener {
@@ -41,6 +44,25 @@ class StorageActivity : AppCompatActivity() {
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 0)
+        }
+    }
+    fun openContent(){
+        var intent = Intent()
+        intent.type = "*/*"
+        intent.action = Intent.ACTION_GET_CONTENT
+        startActivityForResult(intent, FILE)
+    }
+
+    fun uploadFile(fileUri: Uri) {
+        var metaCursor = contentResolver.query(fileUri, arrayOf(MediaStore.MediaColumns.DISPLAY_NAME),null,null,null)!!
+        metaCursor.moveToFirst()
+        var fileName = metaCursor.getString(0)
+        metaCursor.close()
+
+        var storageRef = FirebaseStorage.getInstance().reference.child("files").child(fileName)
+
+        storageRef.putFile(fileUri).addOnSuccessListener {
+            Toast.makeText(this, "Upload photo completed", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -79,6 +101,9 @@ class StorageActivity : AppCompatActivity() {
             var photoUri = data?.data!!
             album_imageview.setImageURI(photoUri)
             uploadPhoto(photoUri)
+        }else if(requestCode == FILE){
+            var fileUri = data?.data!!
+            uploadFile(fileUri)
         }
     }
 
