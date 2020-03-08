@@ -9,6 +9,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.google.firebase.iid.FirebaseInstanceId
 import kotlinx.android.synthetic.main.activity_next.*
 
 class NextActivity : AppCompatActivity() {
@@ -58,6 +59,12 @@ class NextActivity : AppCompatActivity() {
         crush_button.setOnClickListener {
             var a : String? = null
             a!!.length
+        }
+        FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener { instanceIdResult ->
+
+            val token = instanceIdResult.token
+
+            println(token)
         }
     }
     fun logout(){
