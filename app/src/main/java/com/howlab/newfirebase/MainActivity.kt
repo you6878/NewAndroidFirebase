@@ -1,11 +1,13 @@
 package com.howlab.newfirebase
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Base64
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -21,6 +23,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import kotlinx.android.synthetic.main.activity_main.*
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
@@ -54,6 +57,28 @@ class MainActivity : AppCompatActivity() {
         }
         email_login_button.setOnClickListener {
             loginEmail()
+        }
+        val firebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
+        firebaseRemoteConfig.fetch(0).addOnCompleteListener {
+            task ->
+            if(task.isSuccessful){
+                firebaseRemoteConfig.fetchAndActivate()
+                dialogDisplay(firebaseRemoteConfig)
+            }
+        }
+    }
+    fun dialogDisplay(firebaseRemoteConfig : FirebaseRemoteConfig){
+        var showDialog = firebaseRemoteConfig.getBoolean("message_caps")
+        var message = firebaseRemoteConfig.getString("message_content")
+
+        if(showDialog){
+            AlertDialog.Builder(this)
+                .setTitle("Update")
+                .setMessage(message)
+                .setCancelable(false)
+                .setPositiveButton("Ok", DialogInterface.OnClickListener { dialogInterface, i ->
+                    this.finish()
+                }).show()
         }
     }
 
