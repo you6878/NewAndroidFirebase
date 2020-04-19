@@ -15,6 +15,10 @@ import com.facebook.FacebookException
 import com.facebook.login.LoginBehavior
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.InterstitialAd
+import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -37,6 +41,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713")
+        adView.loadAd(AdRequest.Builder().build())
         signup_button.setOnClickListener {
             createEmailId()
         }
@@ -63,7 +69,7 @@ class MainActivity : AppCompatActivity() {
             task ->
             if(task.isSuccessful){
                 firebaseRemoteConfig.fetchAndActivate()
-                dialogDisplay(firebaseRemoteConfig)
+//                dialogDisplay(firebaseRemoteConfig)
             }
         }
     }
