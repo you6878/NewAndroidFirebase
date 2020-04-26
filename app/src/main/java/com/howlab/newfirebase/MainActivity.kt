@@ -5,6 +5,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Base64
 import androidx.appcompat.app.AlertDialog
@@ -15,10 +16,12 @@ import com.facebook.FacebookException
 import com.facebook.login.LoginBehavior
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
-import com.google.android.gms.ads.AdListener
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.InterstitialAd
-import com.google.android.gms.ads.MobileAds
+import com.google.android.ads.nativetemplates.NativeTemplateStyle
+import com.google.android.gms.ads.*
+import com.google.android.gms.ads.rewarded.RewardItem
+import com.google.android.gms.ads.rewarded.RewardedAd
+import com.google.android.gms.ads.rewarded.RewardedAdCallback
+import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -38,11 +41,61 @@ class MainActivity : AppCompatActivity() {
     var googleSignInClient : GoogleSignInClient? = null
     val RC_SIGN_IN = 1000
     var callbackManager = CallbackManager.Factory.create()
+    private lateinit var mInterstitialAd: InterstitialAd
+    private lateinit var rewardedAd: RewardedAd
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713")
         adView.loadAd(AdRequest.Builder().build())
+
+        mInterstitialAd = InterstitialAd(this)
+        mInterstitialAd.adUnitId = "ca-app-pub-3940256099942544/1033173712"
+        mInterstitialAd.loadAd(AdRequest.Builder().build())
+        show_ads.setOnClickListener {
+            mInterstitialAd.show()
+        }
+        mInterstitialAd.adListener = object : AdListener(){
+            override fun onAdLoaded() {
+                super.onAdLoaded()
+                //mInterstitialAd.show()
+            }
+        }
+        //Native ads
+        var adLoader = AdLoader.Builder(this,"ca-app-pub-3940256099942544/2247696110").forUnifiedNativeAd { unifiedNativeAd ->
+            var styles = NativeTemplateStyle.Builder().withMainBackgroundColor(ColorDrawable(resources.getColor(R.color.gnt_red))).build()
+            my_template.setStyles(styles)
+            my_template.setNativeAd(unifiedNativeAd)
+        }.build()
+        adLoader.loadAd(AdRequest.Builder().build())
+        //Video ads
+        rewardedAd = RewardedAd(this, "ca-app-pub-3940256099942544/5224354917")
+        val adLoadCallback = object: RewardedAdLoadCallback() {
+            override fun onRewardedAdLoaded() {
+                // Ad successfully loaded.
+                rewardedAd.show(this@MainActivity,object : RewardedAdCallback(){
+                    override fun onRewardedAdOpened() {
+                        //When open video
+                    }
+
+                    override fun onRewardedAdClosed() {
+                        //When close video
+                    }
+
+                    override fun onUserEarnedReward(p0: RewardItem) {
+                        //When click ads from user
+                    }
+
+                })
+
+            }
+            override fun onRewardedAdFailedToLoad(errorCode: Int) {
+                // Ad failed to load.
+            }
+        }
+        rewardedAd.loadAd(AdRequest.Builder().build(), adLoadCallback)
+
         signup_button.setOnClickListener {
             createEmailId()
         }

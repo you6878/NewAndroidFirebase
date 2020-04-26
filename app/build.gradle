@@ -48,5 +48,8 @@ dependencies {
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
     implementation 'com.google.firebase:firebase-messaging:19.0.0'
     implementation 'com.google.firebase:firebase-config:19.0.0'
+
+    //Add the firebase ads dependency.
     implementation 'com.google.android.gms:play-services-ads:19.0.0'
+    implementation project(':nativetemplates')
 }
